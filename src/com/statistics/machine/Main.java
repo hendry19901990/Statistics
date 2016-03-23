@@ -8,6 +8,8 @@ import org.hyperic.sigar.FileSystemUsage;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.Sigar;
 
+import com.statistics.jetty.JettyEmbeddedAppServer;
+
 public class Main {
 	
 	private static DatabaseStatistics databaseStatistics;
@@ -18,19 +20,24 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception  {
 		
+		JettyEmbeddedAppServer jettyEmbeddedAppServer = new JettyEmbeddedAppServer();
+		jettyEmbeddedAppServer.initialize();
+		
 		databaseStatistics = new DatabaseStatistics();
 		databaseStatistics.crearDatabase();
 		
 		/* only test, it should be commented when is in production */
+		
 		int i = 0;
 		while(i < 5 ){
 			TimeUnit.SECONDS.sleep(2);
 			monitoringProcess();
 			i++;
 		}
-		/* only test, it should be commented when is in production */
 		
-		databaseStatistics.consultaTest();
+		 
+		//databaseStatistics.consultaTest();
+		/* only test, it should be commented when is in production */
 		
 
 	}
@@ -66,9 +73,9 @@ public class Main {
 
 			System.out.println(" Disk Usage " + percentDisk);
 		  
-		  /*
-		   * execute clear old logs
-		   */
+		   /*
+		    * execute clear old logs
+		    */
 			if(percentDisk > 50){
 				MainDelete.deleteAllOldFiles();
 			}
