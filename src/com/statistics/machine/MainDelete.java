@@ -9,8 +9,11 @@ import java.util.List;
 
 public class MainDelete {
 	
-	//change directory of cloud when upload jar
-		static final String nameDirectory = "/home/hendry/Escritorio/pruebaFiles";
+		//local PC
+		//static final String nameDirectory = "/home/hendry/Escritorio/pruebaFiles";
+		
+		// Cloud Server
+		static final String nameDirectory = "/var/log/";
 
 		public static void deleteAllOldFiles() throws Exception {
 			

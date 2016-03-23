@@ -29,24 +29,30 @@ public class DatabaseStatistics {
 			filedirectoryDatabase.mkdirs();
 		
 		 connection = DriverManager.getConnection("jdbc:sqlite:"+directoryDatabase+"databasestatistics.db");
-         statement = connection.createStatement();
-         statement.setQueryTimeout(30);  // set timeout to 30 sec.
-         
-         /* only test, it should be commented when is in production */
-         statement.executeUpdate("drop TABLE IF EXISTS statistics");
-         /* only test, it should be commented when is in production */
-         
-         statement.executeUpdate("CREATE TABLE IF NOT EXISTS statistics (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-         		+ " memory  INT  NOT NULL,"
-         		+ " cpu INT  NOT NULL,"
-         		+ " timeActual DATE DEFAULT CURRENT_DATE)");
+		 
+		 if(connection != null){
+			 
+	         statement = connection.createStatement();
+	         statement.setQueryTimeout(30);  // set timeout to 30 sec.
+	         
+	         /* only test, it should be commented when is in production */
+	         //statement.executeUpdate("drop TABLE IF EXISTS statistics");
+	         /* only test, it should be commented when is in production */
+	         
+	         statement.executeUpdate("CREATE TABLE IF NOT EXISTS statistics (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+	         		+ " memory  INT  NOT NULL,"
+	         		+ " cpu INT  NOT NULL,"
+	         		+ " timeActual DATE DEFAULT CURRENT_DATE)");
+	         
+		 }
 		
 	}
 	
 	
 	public void saveNewPorcentOfMachine(int memory, int cpu) throws Exception{
-			
-		statement.executeUpdate("INSERT INTO statistics (memory, cpu) VALUES ("+memory+", "+cpu+")");
+		
+		if(statement != null)
+			statement.executeUpdate("INSERT INTO statistics (memory, cpu) VALUES ("+memory+", "+cpu+")");
 		
 	}
 	

@@ -1,5 +1,10 @@
 package com.statistics.machine;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.hyperic.sigar.CpuPerc;
@@ -20,22 +25,51 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception  {
 		
-		JettyEmbeddedAppServer jettyEmbeddedAppServer = new JettyEmbeddedAppServer();
-		jettyEmbeddedAppServer.initialize();
+		ExecutorService executorService  =  Executors.newFixedThreadPool(2);
 		
 		databaseStatistics = new DatabaseStatistics();
 		databaseStatistics.crearDatabase();
 		
-		/* only test, it should be commented when is in production */
+		Runnable threadEmbeddedAppServer = new Runnable() {
+			 @Override
+		        public void run() {
+					JettyEmbeddedAppServer jettyEmbeddedAppServer = new JettyEmbeddedAppServer();
+					try {
+						jettyEmbeddedAppServer.initialize();
+					} catch (Exception e) {
+					}
+			 }
+		};
 		
-		int i = 0;
-		while(i < 5 ){
-			TimeUnit.SECONDS.sleep(2);
-			monitoringProcess();
-			i++;
-		}
+		Runnable threadTimer = new Runnable() {
 		
+			@Override
+	        public void run() {
+				Timer timer;
+				timer = new Timer();
+				
+				TimerTask task = new TimerTask() {
+				     @Override
+				     public void run()
+				     {
+						 try {
+							monitoringProcess();
+						 } catch (Exception e) {
+						 }
+					  }
+				};
+				 
+				timer.schedule(task, 0, 5000);
+			}
 		 
+		};
+		 
+		 executorService.submit(threadEmbeddedAppServer);
+		 executorService.submit(threadTimer);
+	 
+		
+		
+		/* only test, it should be commented when is in production */
 		//databaseStatistics.consultaTest();
 		/* only test, it should be commented when is in production */
 		
@@ -43,6 +77,8 @@ public class Main {
 	}
 	
 	private static void monitoringProcess() throws Exception {
+		
+		System.out.println("Executing Process");
 		
 		Sigar sigar = new Sigar();
 		final Mem mem = sigar.getMem(); // Memory
