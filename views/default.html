@@ -9,7 +9,6 @@
 <div class='container'> 
 
  <div class='row'>
-<h1>hello</h1>
    <div class='col-lg-12' ng-controller='controllerStatistic'>
 	<div id='myfirstchart' style='height: 250px;'></div>
    </div>
@@ -32,25 +31,33 @@
  	{
  
  
-	    $http.get('http://192.168.1.4:9696/statistics/admin/usageaverage/current/data')
-		 .success(function(data) {
-		     $scope.statistics = data;
-		    
-			 new Morris.Line({
-			   // ID of the element in which to draw the chart.
-			   element: 'myfirstchart',
-			   // Chart data records -- each entry in this array corresponds to a point on
-			   // the chart.
-			   data: $scope.statistics.data,
-			   // The name of the data record attribute that contains x-values.
-			   xkey: 'day',
-			   // A list of names of data record attributes that contain y-values.
-			   ykeys: ['memory','cpu'],
-			   // Labels for the ykeys -- will be displayed when you hover over the
-			   // chart.
-			   labels: ['Memory','Cpu']
-			});
+	    $http.get('http://localhost:9696/statistics/admin/usageaverage/current/data')
+		 .success(function(response) {
 
+		 	if(response.success){
+		 	 
+			 	 var auxdata = [];
+			 	 auxdata = JSON.parse(response.data);
+			 	 //console.log(auxdata); 
+
+			 	 var index;
+			 	 var vectorstatistics = [];
+			 	 for(index = 0; index < auxdata.length; index++){
+			 	 	var dia = auxdata[index].year.toString() +'-'+ auxdata[index].month.toString() +'-'+ auxdata[index].day.toString();
+			 	  vectorstatistics.push({day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
+			 	 }
+
+			 	 //console.log(vectorstatistics); 
+			     		      
+				 new Morris.Area({
+				   element: 'myfirstchart',
+				   data: vectorstatistics,
+				   xkey: 'day',
+				   ykeys: ['memory','cpu'],
+				   labels: ['Memory','Cpu'],
+				});
+
+			}
 
 		})
 		.error(function(data) {
@@ -63,3 +70,4 @@
 </script>
 </body>  
 </html>  
+

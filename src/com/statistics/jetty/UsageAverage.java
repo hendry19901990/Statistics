@@ -98,7 +98,7 @@ public class UsageAverage {
 		
 		
         return Response.status(200).entity(gson.toJson(respond)).build();
-
+ 
 	}
 	
 	public static List<Statistics> consultCompleteOfActualMonth() throws Exception{
@@ -197,7 +197,7 @@ public class UsageAverage {
 							   cpuAverage,
 							   dateMain,
 							   cal.get(Calendar.YEAR),
-							   cal.get(Calendar.MONTH),
+							   cal.get(Calendar.MONTH) + 1,
 							   cal.get(Calendar.DAY_OF_MONTH));
 					   
 					   listComplete.add(statisticsNew);

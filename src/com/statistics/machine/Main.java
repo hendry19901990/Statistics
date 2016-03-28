@@ -4,8 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystem;
@@ -88,11 +86,10 @@ public class Main {
 		int memoryActual = (mem != null) ? (int) mem.getUsedPercent() : 0;
 		int cpuActual = (cpuPerc != null) ? (int)(cpuPerc.getCombined() * 100) : 0; 
 		
-		System.out.println("Memory " + memoryActual);
-		System.out.println("CPU % " + cpuActual);
-		//System.out.println("CPU " + cpuPerc);
+		//System.out.println("Memory " + memoryActual);
+		//System.out.println("CPU % " + cpuActual);
 				
-		databaseStatistics.saveNewPorcentOfMachine(memoryActual, cpuActual);
+		//databaseStatistics.saveNewPorcentOfMachine(memoryActual, cpuActual);
 		
 		FileSystem [] fileSystemList = sigar.getFileSystemList();
 		FileSystemUsage usage = null;
