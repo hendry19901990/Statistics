@@ -72,7 +72,7 @@ public class MainDelete {
 			
 			if(file.exists() && file.isFile() && nameFileToDie.contains("fermat_server.log")){
 				//descoment this line before upload
-			    //file.delete(); 
+			    file.delete(); 
 				System.out.println(file.getName() + " is deleted!");
 			}else{
 				System.out.println("Delete operation is failed.");

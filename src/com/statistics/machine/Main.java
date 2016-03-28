@@ -21,7 +21,7 @@ public class Main {
 
 	/*
 	 * Run like this:
-	 * java -Djava.library.path=lib -jar estadistica.jar
+	 *  java -Djava.library.path=lib -jar estadistica1.jar
 	 */
 	public static void main(String[] args) throws Exception  {
 		
