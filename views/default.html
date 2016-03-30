@@ -29,13 +29,33 @@
 	<div class='container theme-showcase' role="main"> 
 	
 		<br>
-		 <h2 class="page-header">Statistics of the Usage of Actual Month</h2>
+		 <h2 class="page-header">Statistics of the current month</h2>
 		
 		   <br/>   <br/>
 		 <div class='row'>
 		   <div class='col-lg-12' ng-controller='controllerStatistic'>
-			<div id='myfirstchart' style='height: 250px;'></div>
+			<div id='myfirstchart' style='height: 270px; background-color:white;'></div>
 		   </div>
+		   
+		  <div class='col-lg-3 legend'>
+		  
+		   		<h3 class="page-header"><em> Legend: </em></h3>
+		   		<table>
+		   		<tr>
+		   		   <td><div class="cuadrecpu" ></div></td>
+		   		   <td> <p class='pcpu'> Percent of Cpu</p></td>
+		   		</tr>
+		   		 <tr>
+		   		    <td><div class='cuadrememory'></div></td>
+		   		    <td> <p class='pmemory'> Percent of Memory</p></td>
+		   		  </tr>
+		   		</table>
+	   
+	   
+	   		</div>
+	   
+	   		<div class='col-lg-6'>
+	   		</div>
 		
 		 </div>
 	
@@ -61,6 +81,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <script>
+
+$('.legend').hide();
     var app = angular.module('myApp', []);
       
     app.controller("controllerStatistic", function($scope, $http)
@@ -91,7 +113,10 @@
 				   xkey: 'day',
 				   ykeys: ['memory','cpu'],
 				   labels: ['Memory','Cpu'],
+				    gridTextSize:10
 				});
+				
+				$('.legend').show();
 
 			}
 
@@ -104,6 +129,27 @@
 	});
 
 </script>
+ 
+<style type="text/css">
+
+.cuadrecpu{
+	width:15px;height:15px; background-color:rgba(167, 179, 188, 0.98); 
+}
+
+.cuadrememory{
+	width:15px;height:15px; background-color:rgb(37, 119, 181) 
+}
+
+.pcpu{
+	margin:0;color:rgba(167, 179, 188, 0.98);padding-left: 10px;
+}
+
+.pmemory{
+	margin:0;color:rgb(37, 119, 181);padding-left: 10px;
+}
+
+</style> 
+
 </body>  
 </html>  
 

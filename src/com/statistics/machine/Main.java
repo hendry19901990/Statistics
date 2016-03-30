@@ -89,7 +89,7 @@ public class Main {
 		//System.out.println("Memory " + memoryActual);
 		//System.out.println("CPU % " + cpuActual);
 				
-		//databaseStatistics.saveNewPorcentOfMachine(memoryActual, cpuActual);
+		databaseStatistics.saveNewPorcentOfMachine(memoryActual, cpuActual);
 		
 		FileSystem [] fileSystemList = sigar.getFileSystemList();
 		FileSystemUsage usage = null;
