@@ -68,7 +68,7 @@ public class UsageAverage {
 	}
 	
 	@GET
-	@Path("/current/data")
+	@Path("/current/month")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response consultOfActualMonth() {
 		
@@ -79,6 +79,40 @@ public class UsageAverage {
 		try {
 			conexionDB();
 			listComplete = consultCompleteOfActualMonth();
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if(listComplete != null){
+			
+			respond.addProperty("success", Boolean.TRUE);
+            respond.addProperty("data", gson.toJson(listComplete));
+            
+		}else{
+			
+			respond.addProperty("success", Boolean.FALSE);
+			respond.addProperty("data", "Error: There is not Actual Percent.");
+			
+		}
+		
+		
+        return Response.status(200).entity(gson.toJson(respond)).build();
+ 
+	}
+	
+	@GET
+	@Path("/current/day")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultOfDay() {
+		
+		JsonObject respond = new JsonObject();
+		
+		List<Statistics> listComplete = null;
+		
+		try {
+			conexionDB();
+			listComplete = consultCompleteOftheDay(0);
 			connection.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,6 +249,68 @@ public class UsageAverage {
 		   
 		   
 	}
+	
+	public static List<Statistics> consultCompleteOftheDay(int daySpecial) throws Exception{
+		
+		   List<Statistics> listCompleteOfTheDay = null;
+		   List<Statistics> listComplete = null;
+		   ResultSet rs = null;
+		   
+		   Date dateRightNow = new Date();
+		   Calendar calDateRightNow = Calendar.getInstance();
+		   calDateRightNow.setTime(dateRightNow);
+			
+		   int daySelected = (daySpecial == 0) ? calDateRightNow.get(Calendar.DAY_OF_MONTH) : daySpecial;
+		
+		   if(statement != null)
+				rs = statement.executeQuery("select * from statistics");
+		   
+		   if(rs != null){
+			   
+			   listCompleteOfTheDay = new ArrayList<>();
+			   
+			   while(rs.next())
+			   {
+				   Calendar cal = Calendar.getInstance();
+				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				   Date date = df.parse(rs.getString("timeActual"));
+				   cal.setTime(date);
+				   
+				   if(cal.get(Calendar.YEAR) == calDateRightNow.get(Calendar.YEAR) && 
+						   cal.get(Calendar.MONTH) == calDateRightNow.get(Calendar.MONTH) && 
+						   cal.get(Calendar.DAY_OF_MONTH) == daySelected){
+					   
+					 String extraData = cal.get(Calendar.HOUR_OF_DAY) + ":" +  cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND);  
+					 
+				     Statistics statistics = new Statistics(rs.getInt("id"), 
+				    		                           rs.getInt("memory"), 
+				    		                           rs.getInt("cpu"), 
+				    		                           date
+				    		                           );
+				     
+				     statistics.setExtraData(extraData);
+				     listCompleteOfTheDay.add(statistics);
+				     
+				     System.out.println("Day " + new Gson().toJson(date));
+				     
+				   }
+			   }
+			   
+			   
+			   
+			   rs.close();
+			   
+		   }
+		   
+		   if(listCompleteOfTheDay != null){
+				   listComplete = new ArrayList<>();
+				   listComplete = orderById(listCompleteOfTheDay); 
+		   }
+		   
+		   return listComplete;
+		   
+		   
+	}
 		
 	private static List<Statistics> orderByDay(List<Statistics> listDisOrdered){
 			
@@ -249,6 +345,41 @@ public class UsageAverage {
 			
 			return listComplete;
 			
+	}
+	
+	private static List<Statistics> orderById(List<Statistics> listDisOrdered){
+		
+		List<Statistics> listComplete = new ArrayList<>();
+		Statistics[] arrayDisOrdered = new Statistics[listDisOrdered.size()];
+		
+		int v = 0;
+		for(Statistics s : listDisOrdered){
+			arrayDisOrdered[v] = s;
+			v++;
+		}
+		
+		for(int i = 0; i < arrayDisOrdered.length - 1; i++){
+			
+			for(int j = i+1; j < arrayDisOrdered.length; j++){
+				
+				if(arrayDisOrdered[i].getId() > arrayDisOrdered[j].getId()){
+					Statistics statisticsAux = arrayDisOrdered[i];
+					arrayDisOrdered[i] = arrayDisOrdered[j];
+					arrayDisOrdered[j] = statisticsAux;
+				}
+			}
+			
+		}
+		
+		for(int i = 0; i < arrayDisOrdered.length; i++)
+			listComplete.add(arrayDisOrdered[i]);
+		
+		
+		
+		
+		
+		return listComplete;
+		
 	}
 
 }

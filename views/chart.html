@@ -28,14 +28,21 @@
 <div class='container theme-showcase' role="main"> 
 	
 	<br>
-	<h2 class="page-header">Statistics of the current month</h2>
+	<h2 class="page-header">Statistics of the Current Month</h2>
 		
 	<br/>   <br/>
 
-	 <div class='row'>
+	 <div class='row'  ng-controller='controllerStatistic'>
 	
-	   <div class='col-lg-12' ng-controller='controllerStatistic'>
+	   <div class='col-lg-12'>
 		  <canvas id="myChart"  style="height:400px;width:100%;background-color:white;"></canvas>
+	   </div>
+	   
+	     <br><br>
+		  <h2 class="page-header">Statistics of the Current Day</h2>
+	   
+	   <div class='col-lg-12'>
+		  <canvas id="myChart2"  style="height:400px;width:100%;background-color:white;"></canvas>
 	   </div>
 	   
    	   <div class='col-lg-3 legend'>
@@ -137,63 +144,133 @@ $('.legend').hide();
  	{
  
  
-	  $http.get('/statistics/admin/usageaverage/current/data')
+	  $http.get('/statistics/admin/usageaverage/current/month')
 		.success(function(response) {
-			var vectorAux = [];
-		    vectorAux = JSON.parse(response.data);
-		    //vectorAux = response;
-		    
-		    var ctx = $("#myChart").get(0).getContext("2d");
-
-		    var vectorDays = [];
-		    var vectorMemory = [];
-		    var vectorCpu = [];
-
-		    for (var i = 0; i < vectorAux.length; i++) {
-		    
-		    	var dia = vectorAux[i].year.toString() +'-'+ vectorAux[i].month.toString() +'-'+ vectorAux[i].day.toString();
-		    	vectorDays.push(dia);
-		    	vectorMemory.push(vectorAux[i].memory);
-		    	vectorCpu.push(vectorAux[i].cpu);
-
-		    }
-
-		    var data = {
-			    labels: vectorDays,
-			    datasets: [
-				{
-				    label: "Memory",
-				    fillColor: "rgba(220,220,220,0.2)",
-				    strokeColor: "rgba(220,220,220,1)",
-				    pointColor: "rgba(220,220,220,1)",
-				    pointStrokeColor: "#fff",
-				    pointHighlightFill: "#fff",
-				    pointHighlightStroke: "rgba(220,220,220,1)",
-				    data: vectorMemory
-				},
-				{
-				    label: "Cpu",
-				    fillColor: "rgba(151,187,205,0.2)",
-				    strokeColor: "rgba(151,187,205,1)",
-				    pointColor: "rgba(151,187,205,1)",
-				    pointStrokeColor: "#fff",
-				    pointHighlightFill: "#fff",
-				    pointHighlightStroke: "rgba(151,187,205,1)",
-				    data: vectorCpu
-				}
-			    ]
-			};
-
-
-			new Chart(ctx).Line(data, options);
-			
-			$('.legend').show();
-					 
+		
+		  if(response.success){
+		  
+				var vectorAux = [];
+			    vectorAux = JSON.parse(response.data);
+			    //vectorAux = response;
+			    
+			    var ctx = $("#myChart").get(0).getContext("2d");
+	
+			    var vectorDays = [];
+			    var vectorMemory = [];
+			    var vectorCpu = [];
+	
+			    for (var i = 0; i < vectorAux.length; i++) {
+			    
+			    	var dia = vectorAux[i].year.toString() +'-'+ vectorAux[i].month.toString() +'-'+ vectorAux[i].day.toString();
+			    	vectorDays.push(dia);
+			    	vectorMemory.push(vectorAux[i].memory);
+			    	vectorCpu.push(vectorAux[i].cpu);
+	
+			    }
+	
+			    var data = {
+				    labels: vectorDays,
+				    datasets: [
+					{
+					    label: "Memory",
+					    fillColor: "rgba(220,220,220,0.2)",
+					    strokeColor: "rgba(220,220,220,1)",
+					    pointColor: "rgba(220,220,220,1)",
+					    pointStrokeColor: "#fff",
+					    pointHighlightFill: "#fff",
+					    pointHighlightStroke: "rgba(220,220,220,1)",
+					    data: vectorMemory
+					},
+					{
+					    label: "Cpu",
+					    fillColor: "rgba(151,187,205,0.2)",
+					    strokeColor: "rgba(151,187,205,1)",
+					    pointColor: "rgba(151,187,205,1)",
+					    pointStrokeColor: "#fff",
+					    pointHighlightFill: "#fff",
+					    pointHighlightStroke: "rgba(151,187,205,1)",
+					    data: vectorCpu
+					}
+				    ]
+				};
+	
+	
+				new Chart(ctx).Line(data, options);
+				
+				$('.legend').show();
+				
+			}	 
 
 		})
 		.error(function(data) {
 		    console.log('Error: ' + data);
 	   });  
+	   
+	   
+	   
+	   $http.get('/statistics/admin/usageaverage/current/day')
+		 .success(function(response) {
+		 
+		   console.log(response);
+
+		 	if(response.success){
+		 	 
+			 	var vectorAux = [];
+			    vectorAux = JSON.parse(response.data);
+			    //vectorAux = response;
+			    
+			    var ctx2 = $("#myChart2").get(0).getContext("2d");
+	
+			    var vectorDays = [];
+			    var vectorMemory = [];
+			    var vectorCpu = [];
+	
+			    for (var i = 0; i < vectorAux.length; i++) {
+			    
+			    	var dia = vectorAux[i].extraData.toString();
+			    	vectorDays.push(dia);
+			    	vectorMemory.push(vectorAux[i].memory);
+			    	vectorCpu.push(vectorAux[i].cpu);
+	
+			    }
+	
+			    var data = {
+				    labels: vectorDays,
+				    datasets: [
+					{
+					    label: "Memory",
+					    fillColor: "rgba(220,220,220,0.2)",
+					    strokeColor: "rgba(220,220,220,1)",
+					    pointColor: "rgba(220,220,220,1)",
+					    pointStrokeColor: "#fff",
+					    pointHighlightFill: "#fff",
+					    pointHighlightStroke: "rgba(220,220,220,1)",
+					    data: vectorMemory
+					},
+					{
+					    label: "Cpu",
+					    fillColor: "rgba(151,187,205,0.2)",
+					    strokeColor: "rgba(151,187,205,1)",
+					    pointColor: "rgba(151,187,205,1)",
+					    pointStrokeColor: "#fff",
+					    pointHighlightFill: "#fff",
+					    pointHighlightStroke: "rgba(151,187,205,1)",
+					    data: vectorCpu
+					}
+				    ]
+				};
+	
+	
+				new Chart(ctx2).Line(data, options);
+
+			}
+
+		})
+		.error(function(data) {
+		    console.log('Error: ' + data);
+	   });
+	   
+	   
 
 
 	});

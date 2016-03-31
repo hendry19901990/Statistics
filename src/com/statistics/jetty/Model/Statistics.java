@@ -12,7 +12,10 @@ public class Statistics {
 	private int year = 0;
 	private int month = 0;
 	private int day = 0;
+	private String extraData;
 	
+
+
 	public Statistics(){}
 	
 	public Statistics(long id, int memory, int cpu, Date timeActual){
@@ -30,6 +33,25 @@ public class Statistics {
 		this.year = year;
 		this.month = month;
 		this.day = day;
+	}
+	
+	public Statistics(long id, int memory, int cpu, Date timeActual, int year, int month, int day, String extraData){
+		this.id = id;
+		this.memory = memory;
+		this.cpu = cpu;
+		this.timeActual = timeActual;
+		this.year = year;
+		this.month = month;
+		this.day = day;
+		this.extraData = extraData;
+	}
+	
+	public String getExtraData() {
+		return extraData;
+	}
+
+	public void setExtraData(String extraData) {
+		this.extraData = extraData;
 	}
 	
 	public int getYear() {

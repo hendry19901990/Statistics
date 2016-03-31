@@ -29,12 +29,21 @@
 	<div class='container theme-showcase' role="main"> 
 	
 		<br>
-		 <h2 class="page-header">Statistics of the current month</h2>
+		 <h2 class="page-header">Statistics of the Current Month</h2>
 		
 		   <br/>   <br/>
-		 <div class='row'>
-		   <div class='col-lg-12' ng-controller='controllerStatistic'>
+		 <div class='row' ng-controller='controllerStatistic'>
+		 
+		   <div class='col-lg-12' >
 			<div id='myfirstchart' style='height: 270px; background-color:white;'></div>
+		   </div>
+		   
+		   
+		  <br>
+		  <h2 class="page-header">Statistics of the Current Day</h2>
+		 
+		   <div class='col-lg-12' >
+			 <div id='mysecondchart' style='height: 270px; background-color:white;'></div>
 		   </div>
 		   
 		  <div class='col-lg-3 legend'>
@@ -89,7 +98,7 @@ $('.legend').hide();
  	{
  
  
-	    $http.get('/statistics/admin/usageaverage/current/data')
+	    $http.get('/statistics/admin/usageaverage/current/month')
 		 .success(function(response) {
 
 		 	if(response.success){
@@ -124,6 +133,46 @@ $('.legend').hide();
 		.error(function(data) {
 		    console.log('Error: ' + data);
 	   });
+	   
+	   
+	   $http.get('/statistics/admin/usageaverage/current/day')
+		 .success(function(response) {
+
+		 	if(response.success){
+		 	 
+			 	 var auxdata = [];
+			 	 auxdata = JSON.parse(response.data);
+			 	 //console.log(auxdata); 
+
+			 	 var index;
+			 	 var vectorstatistics = [];
+			 	 for(index = 0; index < auxdata.length; index++){
+			 	 	var dia = auxdata[index].extraData.toString();
+			 	  vectorstatistics.push({day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
+			 	 }
+
+			 	 //console.log(vectorstatistics); 
+			     		      
+				 new Morris.Area({
+				   element: 'mysecondchart',
+				   data: vectorstatistics,
+				   xkey: 'day',
+				   ykeys: ['memory','cpu'],
+				   labels: ['Memory','Cpu'],
+				    gridTextSize:10
+				});
+				
+				$('.legend').show();
+
+			}
+
+		})
+		.error(function(data) {
+		    console.log('Error: ' + data);
+	   });
+	   
+	   
+	   
 
 
 	});
