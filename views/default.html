@@ -89,7 +89,7 @@ $('.legend').hide();
  	{
  
  
-	    $http.get('http://localhost:9696/statistics/admin/usageaverage/current/data')
+	    $http.get('/statistics/admin/usageaverage/current/data')
 		 .success(function(response) {
 
 		 	if(response.success){
