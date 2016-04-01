@@ -38,9 +38,10 @@
 			<div id='myfirstchart' style='height: 270px; background-color:white;'></div>
 		   </div>
 		   
-		   
-		  <br>
-		  <h2 class="page-header">Statistics of the Current Day</h2>
+		   <div class='col-lg-12' >
+		  	<br><br>
+		  	<h2 class="page-header">Statistics of the Current Day</h2>
+		  </div>
 		 
 		   <div class='col-lg-12' >
 			 <div id='mysecondchart' style='height: 270px; background-color:white;'></div>
@@ -139,19 +140,18 @@ $('.legend').hide();
 		 .success(function(response) {
 
 		 	if(response.success){
-		 	 
+		 	 	 
 			 	 var auxdata = [];
 			 	 auxdata = JSON.parse(response.data);
-			 	 //console.log(auxdata); 
+			 	 console.log(auxdata); 
 
 			 	 var index;
 			 	 var vectorstatistics = [];
 			 	 for(index = 0; index < auxdata.length; index++){
-			 	 	var dia = auxdata[index].extraData.toString();
-			 	  vectorstatistics.push({day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
+			 	 	var dia = auxdata[index].year.toString() +'-'+ auxdata[index].month.toString() +'-'+ auxdata[index].day.toString() + ' ' +auxdata[index].extraData.toString(); 
+			 	    vectorstatistics.push({day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
 			 	 }
 
-			 	 //console.log(vectorstatistics); 
 			     		      
 				 new Morris.Area({
 				   element: 'mysecondchart',

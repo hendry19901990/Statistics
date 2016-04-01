@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -157,7 +156,7 @@ public class UsageAverage {
 			   while(rs.next())
 			   {
 				   Calendar cal = Calendar.getInstance();
-				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 				   Date date = df.parse(rs.getString("timeActual"));
 				   cal.setTime(date);
 				   
@@ -272,7 +271,7 @@ public class UsageAverage {
 			   while(rs.next())
 			   {
 				   Calendar cal = Calendar.getInstance();
-				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 				   Date date = df.parse(rs.getString("timeActual"));
 				   cal.setTime(date);
 				   
@@ -285,13 +284,16 @@ public class UsageAverage {
 				     Statistics statistics = new Statistics(rs.getInt("id"), 
 				    		                           rs.getInt("memory"), 
 				    		                           rs.getInt("cpu"), 
-				    		                           date
+				    		                           date,
+				    								   cal.get(Calendar.YEAR),
+				    								   cal.get(Calendar.MONTH) + 1,
+				    								   cal.get(Calendar.DAY_OF_MONTH)
 				    		                           );
 				     
 				     statistics.setExtraData(extraData);
 				     listCompleteOfTheDay.add(statistics);
 				     
-				     System.out.println("Day " + new Gson().toJson(date));
+				     //System.out.println("Day " + new Gson().toJson(date));
 				     
 				   }
 			   }

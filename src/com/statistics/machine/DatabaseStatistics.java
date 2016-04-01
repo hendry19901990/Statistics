@@ -2,6 +2,7 @@ package com.statistics.machine;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -40,9 +41,9 @@ public class DatabaseStatistics {
 	         /* only test, it should be commented when is in production */
 	         
 	         statement.executeUpdate("CREATE TABLE IF NOT EXISTS statistics (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-	         		+ " memory  INT  NOT NULL,"
-	         		+ " cpu INT  NOT NULL,"
-	         		+ " timeActual DATE DEFAULT CURRENT_DATE)");
+	         		+ " memory INT NOT NULL,"
+	         		+ " cpu INT NOT NULL,"
+	         		+ " timeActual DATETIME NOT NULL)");
 	         
 		 }
 		
@@ -51,8 +52,10 @@ public class DatabaseStatistics {
 	
 	public void saveNewPorcentOfMachine(int memory, int cpu) throws Exception{
 		
-		if(statement != null)
-			statement.executeUpdate("INSERT INTO statistics (memory, cpu) VALUES ("+memory+", "+cpu+")");
+		if(statement != null){
+			java.sql.Timestamp timeActual = new Timestamp(System.currentTimeMillis());
+			statement.executeUpdate("INSERT INTO statistics (memory, cpu, timeActual) VALUES ("+memory+", "+cpu+", '"+timeActual+"')");
+		}
 		
 	}
 	
@@ -64,12 +67,16 @@ public class DatabaseStatistics {
 	   
 	   while(rs.next())
 	   {
-		   DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		   Date today = df.parse(rs.getString("timeActual"));
-		   java.sql.Timestamp timeStampDate = new Timestamp(today.getTime());
+		   
+		   DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		   Date date = df.parse(rs.getString("timeActual"));
+		   Calendar cal = Calendar.getInstance();
+		   cal.setTime(date);
+		   
+		   String completoDay =  cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH) + 1)+"-"+ cal.get(Calendar.DAY_OF_MONTH);
 		     
 	       System.out.println("id= " + rs.getInt("id") + " memory= " + rs.getInt("memory") + " cpu= " 
-	        	+ rs.getInt("cpu") + " timeActual= " + timeStampDate);
+	        	+ rs.getInt("cpu") + " timeActual= " + completoDay);
 	   }
 	   
 	   if(rs != null)
