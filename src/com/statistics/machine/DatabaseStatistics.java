@@ -14,13 +14,12 @@ import java.text.SimpleDateFormat;
 public class DatabaseStatistics {
 	
 	private Connection connection = null;
+	private Statement statement = null;
+		
 	public Connection getConnection() {
 		return connection;
 	}
-
-	private Statement statement = null;
-	
-	
+		
 	public void crearDatabase() throws Exception{
 		
 		Class.forName("org.sqlite.JDBC");
