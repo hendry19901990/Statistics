@@ -3,7 +3,6 @@ package com.statistics.jetty;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -23,19 +22,15 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.statistics.jetty.Model.Statistics;
+import com.statistics.machine.Main;
 
 
 
 @Path("/statistics/admin/usageaverage")
 public class UsageAverage {
+
 	
-    /*
-     * Represent the gson
-     */
      private Gson gson;
-     
- 	private static Connection connection = null;
- 	private static Statement statement = null;
 	
 	 public UsageAverage() {
 	   super();
@@ -47,24 +42,6 @@ public class UsageAverage {
 	        return "Statistics is OK!";
 	 }
 	 
-	 
-	 
-	public static void conexionDB() throws Exception{
-			
-		Class.forName("org.sqlite.JDBC");
-			
-		String directoryDatabase = System.getProperties().getProperty("user.home");
-		directoryDatabase = directoryDatabase + "/externalStorage/files/";
-			
-		File filedirectoryDatabase = new File(directoryDatabase);
-			
-		if(filedirectoryDatabase.exists()){
-			  connection = DriverManager.getConnection("jdbc:sqlite:"+directoryDatabase+"databasestatistics.db");
-	          statement = connection.createStatement();
-	          statement.setQueryTimeout(30);  // set timeout to 30 sec.
-		}
-			
-	}
 	
 	@GET
 	@Path("/current/month")
@@ -76,9 +53,7 @@ public class UsageAverage {
 		List<Statistics> listComplete = null;
 		
 		try {
-			conexionDB();
 			listComplete = consultCompleteOfActualMonth();
-			connection.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -110,9 +85,7 @@ public class UsageAverage {
 		List<Statistics> listComplete = null;
 		
 		try {
-			conexionDB();
 			listComplete = consultCompleteOftheDay(0);
-			connection.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -139,37 +112,44 @@ public class UsageAverage {
 		   List<Statistics> listCompleteOfActualMonth = null;
 		   List<Statistics> listComplete = null;
 		   HashMap <Integer, List<Statistics>> listofDays = null;
-		   ResultSet rs = null;
+		   ResultSet rsMonth = null;
+		   Statement statementMonth = null;
 		   
-		    Date dateRightNow = new Date();
+		   Date dateRightNow = new Date();
 			
-			Calendar calDateRightNow = Calendar.getInstance();
-			calDateRightNow.setTime(dateRightNow);
+		   Calendar calDateRightNow = Calendar.getInstance();
+		   calDateRightNow.setTime(dateRightNow);
 		
-			if(statement != null)
-				rs = statement.executeQuery("select * from statistics");
+
+		   if(Main.getConnectionMain() != null){
+			   statementMonth = Main.getConnectionMain().createStatement();
+			   statementMonth.setQueryTimeout(30);
+			   rsMonth = statementMonth.executeQuery("select * from statistics");
+		   }
+		
 		   
-		   if(rs != null){
+		   if(rsMonth != null){
 			   
 			   listCompleteOfActualMonth = new ArrayList<>();
 			   
-			   while(rs.next())
+			   while(rsMonth.next())
 			   {
 				   Calendar cal = Calendar.getInstance();
 				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-				   Date date = df.parse(rs.getString("timeActual"));
+				   Date date = df.parse(rsMonth.getString("timeActual"));
 				   cal.setTime(date);
 				   
 				   if(cal.get(Calendar.YEAR) == calDateRightNow.get(Calendar.YEAR) && 
 						   cal.get(Calendar.MONTH) == calDateRightNow.get(Calendar.MONTH)){
 					   
-				     Statistics statistics = new Statistics(rs.getInt("id"), rs.getInt("memory"), rs.getInt("cpu"), date);
+				     Statistics statistics = new Statistics(rsMonth.getInt("id"), rsMonth.getInt("memory"), rsMonth.getInt("cpu"), date);
 				     listCompleteOfActualMonth.add(statistics);
 				     
 				   }
 			   }
 			   
-			   rs.close();
+			   rsMonth.close();
+			   statementMonth.close();
 			   
 		   }
 		   
@@ -253,7 +233,8 @@ public class UsageAverage {
 		
 		   List<Statistics> listCompleteOfTheDay = null;
 		   List<Statistics> listComplete = null;
-		   ResultSet rs = null;
+		   ResultSet rsDay = null;
+		   Statement statementDay = null;
 		   
 		   Date dateRightNow = new Date();
 		   Calendar calDateRightNow = Calendar.getInstance();
@@ -261,18 +242,21 @@ public class UsageAverage {
 			
 		   int daySelected = (daySpecial == 0) ? calDateRightNow.get(Calendar.DAY_OF_MONTH) : daySpecial;
 		
-		   if(statement != null)
-				rs = statement.executeQuery("select * from statistics");
+		   if(Main.getConnectionMain() != null){
+			   statementDay = Main.getConnectionMain().createStatement();
+			   statementDay.setQueryTimeout(30);
+			   rsDay = statementDay.executeQuery("select * from statistics");
+		   }
 		   
-		   if(rs != null){
+		   if(rsDay != null){
 			   
 			   listCompleteOfTheDay = new ArrayList<>();
 			   
-			   while(rs.next())
+			   while(rsDay.next())
 			   {
 				   Calendar cal = Calendar.getInstance();
 				   DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-				   Date date = df.parse(rs.getString("timeActual"));
+				   Date date = df.parse(rsDay.getString("timeActual"));
 				   cal.setTime(date);
 				   
 				   if(cal.get(Calendar.YEAR) == calDateRightNow.get(Calendar.YEAR) && 
@@ -281,9 +265,9 @@ public class UsageAverage {
 					   
 					 String extraData = cal.get(Calendar.HOUR_OF_DAY) + ":" +  cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND);  
 					 
-				     Statistics statistics = new Statistics(rs.getInt("id"), 
-				    		                           rs.getInt("memory"), 
-				    		                           rs.getInt("cpu"), 
+				     Statistics statistics = new Statistics(rsDay.getInt("id"), 
+				    		 							rsDay.getInt("memory"), 
+				    		 							rsDay.getInt("cpu"), 
 				    		                           date,
 				    								   cal.get(Calendar.YEAR),
 				    								   cal.get(Calendar.MONTH) + 1,
@@ -300,7 +284,8 @@ public class UsageAverage {
 			   
 			   
 			   
-			   rs.close();
+			   rsDay.close();
+			   statementDay.close();
 			   
 		   }
 		   

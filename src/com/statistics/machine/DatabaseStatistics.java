@@ -14,6 +14,10 @@ import java.text.SimpleDateFormat;
 public class DatabaseStatistics {
 	
 	private Connection connection = null;
+	public Connection getConnection() {
+		return connection;
+	}
+
 	private Statement statement = null;
 	
 	

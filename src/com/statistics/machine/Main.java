@@ -1,5 +1,6 @@
 package com.statistics.machine;
 
+import java.sql.Connection;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -115,6 +116,10 @@ public class Main {
 		  
 		}
 		
+	}
+	
+	public static Connection getConnectionMain(){
+		return databaseStatistics.getConnection();
 	}
 
 }
