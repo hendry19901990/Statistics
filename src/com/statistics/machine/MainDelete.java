@@ -34,7 +34,7 @@ public class MainDelete {
 				  for (int x=0;x<listOfFiles.length;x++){
 					  
 					  if(listOfFiles[x].contains("fermat_server.log")){
-						  candidatesToDie.add(listOfFiles[x].trim());
+						  candidatesToDie.add(listOfFiles[x]);
 					  }
 				  }
 				  
@@ -51,12 +51,12 @@ public class MainDelete {
 				
 				for(String nameFile : candidatesToDie){
 					
-					if(!nameFile.equalsIgnoreCase(mainFileToNotDelete) && !nameFile.equalsIgnoreCase(todayFileToNotDelete))
+					if(!nameFile.equalsIgnoreCase(mainFileToNotDelete) && !nameFile.equalsIgnoreCase(todayFileToNotDelete) && !nameFile.contains("swp"))
 						deleteFileSure(nameFile);
 		
 				}
 				
-				System.out.println("********************************************************");
+				System.out.println("*********************************************************");
 				
 			}
 			
@@ -66,16 +66,14 @@ public class MainDelete {
 		
 		private static void deleteFileSure(String nameFileToDie) throws Exception {
 			
-			//System.out.println( nameFileToDie);
-			
 			File file = new File(nameDirectory + "/" + nameFileToDie);
 			
-			if(file.exists() && file.isFile() && nameFileToDie.contains("fermat_server.log")){
-				//descoment this line before upload
+			if(file.exists() && file.isFile() && nameFileToDie.contains("fermat_server.log") && !nameFileToDie.contains("swp")){
+				//Comment this line when is test
 			    file.delete(); 
 				System.out.println(file.getName() + " is deleted!");
 			}else{
-				System.out.println("Delete operation is failed.");
+				System.out.println("Cant Delete the File " + nameFileToDie);
 			}
 			
 		}
