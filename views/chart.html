@@ -146,7 +146,7 @@ $('.legend').hide();
  	{
  
  
-	  $http.get('/statistics/admin/usageaverage/current/month')
+	  $http.get('http://localhost:9696/statistics/admin/usageaverage/current/month')
 		.success(function(response) {
 		
 		  if(response.success){
@@ -210,31 +210,53 @@ $('.legend').hide();
 	   
 	   
 	   
-	   $http.get('/statistics/admin/usageaverage/current/day')
+	   $http.get('http://localhost:9696/statistics/admin/usageaverage/current/day')
 		 .success(function(response) {
 		 
 		    if(response.success){
 		 	
-		 	   console.log(JSON.parse(response.data));
+		 	   //console.log(JSON.parse(response.data));
 		 	 
 			 	var vectorAux = [];
 			    vectorAux = JSON.parse(response.data);
-			    //vectorAux = response;
 			    
 			    var ctx2 = $("#myChart2").get(0).getContext("2d");
 	
 			    var vectorDays = [];
 			    var vectorMemory = [];
 			    var vectorCpu = [];
-	
-			    for (var i = 0; i < vectorAux.length; i++) {
+			    var i;
+
+				vectorAux.sort(function(a, b){
+				 return b.cpu-a.cpu
+				});
+ 
+
+			 	var orderedbyMaxCpu = [];
+
+			 	for(i = 0; i < vectorAux.length; i++){
+
+			 		if(i==15)
+			 			break;
+
+			 		orderedbyMaxCpu[i] = vectorAux[i];
+
+			 	}
+
+			 	orderedbyMaxCpu.sort(function(a, b){
+				   return a.id - b.id
+				});
+
+
+			    for (var i = 0; i < orderedbyMaxCpu.length; i++) {
 			    
-			    	var dia = vectorAux[i].extraData.toString();
+			    	var dia = orderedbyMaxCpu[i].extraData;
 			    	vectorDays.push(dia);
-			    	vectorMemory.push(vectorAux[i].memory);
-			    	vectorCpu.push(vectorAux[i].cpu);
+			    	vectorMemory.push(orderedbyMaxCpu[i].memory);
+			    	vectorCpu.push(orderedbyMaxCpu[i].cpu);
 	
 			    }
+
 	
 			    var data = {
 				    labels: vectorDays,

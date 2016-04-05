@@ -99,7 +99,7 @@ $('.legend').hide();
  	{
  
  
-	    $http.get('/statistics/admin/usageaverage/current/month')
+	    $http.get('http://localhost:9696/statistics/admin/usageaverage/current/month')
 		 .success(function(response) {
 
 		 	if(response.success){
@@ -135,7 +135,7 @@ $('.legend').hide();
 	   });
 	   
 	   
-	   $http.get('/statistics/admin/usageaverage/current/day')
+	   $http.get('http://localhost:9696/statistics/admin/usageaverage/current/day')
 		 .success(function(response) {
 
 		 	if(response.success){
@@ -148,13 +148,35 @@ $('.legend').hide();
 			 	 var vectorstatistics = [];
 			 	 for(index = 0; index < auxdata.length; index++){
 			 	 	var dia = auxdata[index].year.toString() +'-'+ auxdata[index].month.toString() +'-'+ auxdata[index].day.toString() + ' ' +auxdata[index].extraData.toString(); 
-			 	    vectorstatistics.push({day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
+			 	    vectorstatistics.push({id:auxdata[index].id, day:dia, memory:auxdata[index].memory, cpu:auxdata[index].cpu});
 			 	 }
+
+
+			 	vectorstatistics.sort(function(a, b){
+				  return b.cpu - a.cpu
+				});
+
+
+			 	var orderedbyMaxCpu = [];
+
+			 	for(index = 0; index < vectorstatistics.length; index++){
+
+			 		if(index==25)
+			 			break;
+
+			 		orderedbyMaxCpu[index] = vectorstatistics[index];
+
+			 	}
+
+
+			 	orderedbyMaxCpu.sort(function(a, b){
+				   return a.id - b.id
+				});
 
 			     		      
 				 new Morris.Area({
 				   element: 'mysecondchart',
-				   data: vectorstatistics,
+				   data: orderedbyMaxCpu,
 				   xkey: 'day',
 				   ykeys: ['memory','cpu'],
 				   labels: ['Memory','Cpu'],
@@ -200,4 +222,3 @@ $('.legend').hide();
 
 </body>  
 </html>  
-
