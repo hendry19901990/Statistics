@@ -10,7 +10,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -37,6 +40,20 @@ public class UsageAverage {
 	 @GET
 	 public String isActive() {
 	        return "Statistics is OK!";
+	 }
+	 
+	 @POST
+	 @Path("/saveserverconfbyplatform")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public Response notificationserverplatform(@FormParam("networkservicetype") String networkServiceTypeReceive, @FormParam("ipserver") String ipserver) {
+		 
+		 System.out.println("networkservicetype " + networkServiceTypeReceive + " ipserver " +  ipserver);
+		 
+		 JsonObject jsonobject = new JsonObject();
+		 jsonobject.addProperty("success", Boolean.TRUE);
+		 jsonobject.addProperty("data", "successfully was save the server");
+		 
+		 return Response.status(200).entity(gson.toJson(jsonobject)).build();
 	 }
 	 
 	
